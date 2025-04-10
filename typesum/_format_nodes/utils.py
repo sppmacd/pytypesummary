@@ -6,19 +6,24 @@ from typesum._format_nodes import (
     pandas,
     primitives,
 )
+from typesum.expands import Expand
 
 
-def create_format_node(obj) -> FormatNode:
-    # TODO: dynamically import the modules if used
-    import numpy as np
-    import pandas as pd
+def create_format_node(obj, *, expand: list[Expand]) -> FormatNode:
+    # print(type(obj).__name__)
 
+    o: FormatNode
     if isinstance(obj, str):
-        return primitives.Str(obj)
-    if isinstance(obj, (list, tuple)):
-        return iterables.RaIterable(obj)
-    if isinstance(obj, np.ndarray):
-        return numpy.Array(obj)
-    if isinstance(obj, pd.DataFrame):
-        return pandas.DataFrame(obj)
-    return default.Default(obj)
+        o = primitives.Str(obj)
+    elif isinstance(obj, (list, tuple)):
+        o = iterables.RaIterable(obj)
+    elif type(obj).__name__ == "ndarray":
+        o = numpy.Array(obj)
+    elif type(obj).__name__ == "DataFrame":
+        o = pandas.DataFrame(obj)
+    else:
+        o = default.Default(obj)
+
+    o.set_forced_expands(expand)
+    o.init()
+    return o

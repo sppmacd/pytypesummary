@@ -21,7 +21,7 @@ class Str(FormatNode):
         has_long_string = self._has_expand(Expand.LONG_STRING)
         has_short_string = self._has_expand(Expand.SHORT_STRING)
         if has_long_string or has_short_string:
-            max_len = 15 if self._has_expand(Expand.LONG_STRING) else 6
+            max_len = 15 if has_long_string else 6
             if len(self.obj) <= max_len + 3:
                 obj_repr = f'"{self.obj}"'
                 return f"{_fmt.string(obj_repr)}"

@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 
 from typesum import print_summary
+from typesum.expands import Expand
 
 if __name__ == "__main__":
     print_summary(1)
@@ -17,7 +18,10 @@ if __name__ == "__main__":
     print_summary([1, 2, ["test"], 4])
     print_summary([1, 2, ["test"], 4, 5, 6, ["test2"], "testaaaaggggaaaaa3"])
     print_summary(range(100))
-    print_summary([*range(100)])
+    print_summary(
+        [*range(15), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, "test", [], {}],
+        expand=[Expand.AGGREGATE],
+    )
 
     # NumPy
     print_summary(np.array([[1, 2, 3], [4, 5, 6]]))
@@ -26,6 +30,13 @@ if __name__ == "__main__":
             np.array([[1, 2, 3], [4, 5, 6]]),
             np.array([[[1, 10], [2, 20], [3, 30]], [[4, 40], [5, 50], [6, 60]]]),
         ),
+    )
+    print_summary(
+        (
+            np.array([[1, 2, 3], [4, 5, 6]]),
+            np.array([[[1, 10], [2, 20], [3, 30]], [[4, 40], [5, 50], [6, 60]]]),
+        ),
+        expand=[Expand.SIZE, Expand.FULL_VALUE],
     )
 
     print_summary(np.zeros((100, 100, 100)))

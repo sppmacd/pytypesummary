@@ -25,6 +25,7 @@ class FormatNode:
     the expands will be disabled one by one."""
     _expands: list[Expand]
     _enabled_expands: list[Expand]
+    _forced_expands: list[Expand]
 
     def __init__(self, obj: _fmt.Formattable, *, expands: list[Expand]) -> None:
         self.obj = obj
@@ -49,13 +50,24 @@ class FormatNode:
         if self._contract_children():
             return True
 
-        # Then, contract us by removing the first expand.
-        if self._enabled_expands:
-            self._enabled_expands.pop(0)
-            return True
+        # Then, contract us by removing the first non-forced expand.
+        for expand in self._enabled_expands:
+            if expand not in self._forced_expands:
+                self._enabled_expands.remove(expand)
+                return True
 
         # Finally, if we can't contract anymore, return False.
         return False
+
+    def set_forced_expands(self, expands: list[Expand]) -> None:
+        """Set the forced expands.
+
+        These expands will not be removed when contracting.
+        """
+        self._forced_expands = copy.deepcopy(expands)
+
+    def init(self) -> None:
+        """Initialize the node. Called after the node is created."""
 
     def _has_expand(self, expand: Expand) -> bool:
         """Check if the expand is enabled."""

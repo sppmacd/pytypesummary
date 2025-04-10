@@ -34,15 +34,15 @@ class RaIterable(FormatNode):
             ],
         )
 
-        self.obj = obj
-
-        # generate format nodes for each element
-        self._generate_obj_nodes()
-
     def _generate_obj_nodes(self) -> None:
         # FIXME: don't generate for every element at there might be a lot
         #       of them
-        self.obj_nodes = [utils.create_format_node(o) for o in self.obj]
+        self.obj_nodes = [
+            utils.create_format_node(o, expand=self._forced_expands) for o in self.obj
+        ]
+
+    def init(self) -> None:
+        self._generate_obj_nodes()
 
     def _contract_children(self) -> bool:
         # First, contract all the children. If no child can be
@@ -61,10 +61,16 @@ class RaIterable(FormatNode):
                 ', '.join(on.format() or '...' for on in self.obj_nodes)
             }]"
 
+        has_size = self._has_expand(Expand.SIZE)
+
         if self._has_expand(Expand.AGGREGATE):
+            if has_size:
+                return f"{type_name}[{_fmt.number(len(self.obj))}: {
+                    _aggregate_and_format_objects(self.obj_nodes)
+                }]"
             return f"{type_name}[{_aggregate_and_format_objects(self.obj_nodes)}]"
 
-        if self._has_expand(Expand.SIZE):
+        if has_size:
             return f"{type_name}[{_fmt.number(len(self.obj))}]"
 
         return type_name
