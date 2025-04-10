@@ -5,7 +5,7 @@ import typing
 HasRepr = typing.Any
 Formattable = typing.Any
 
-enable_fmt = False
+enable_fmt = True
 
 
 def type_(text: HasRepr) -> str:
