@@ -29,7 +29,6 @@ class RaIterable(FormatNode):
             obj,
             expands=[
                 Expand.FULL_VALUE,
-                Expand.AGGREGATE,
                 Expand.SIZE,
             ],
         )

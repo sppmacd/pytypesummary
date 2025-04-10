@@ -18,10 +18,9 @@ if __name__ == "__main__":
     print_summary([1, 2, ["test"], 4])
     print_summary([1, 2, ["test"], 4, 5, 6, ["test2"], "testaaaaggggaaaaa3"])
     print_summary(range(100))
-    print_summary(
-        [*range(15), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, "test", [], {}],
-        expand=[Expand.AGGREGATE],
-    )
+    complex_list = ([*range(15), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, "test", [], {}],)
+    print_summary(complex_list)
+    print_summary(complex_list, expand=[Expand.AGGREGATE])
 
     # NumPy
     print_summary(np.array([[1, 2, 3], [4, 5, 6]]))

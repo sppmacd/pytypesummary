@@ -23,13 +23,11 @@ class FormatNode:
     in full). For example, we may print the full value ('full'),
     or type ('type'), or both (['full', 'type']). When contracting,
     the expands will be disabled one by one."""
-    _expands: list[Expand]
     _enabled_expands: list[Expand]
     _forced_expands: list[Expand]
 
     def __init__(self, obj: _fmt.Formattable, *, expands: list[Expand]) -> None:
         self.obj = obj
-        self._expands = expands
         self._enabled_expands = copy.deepcopy(expands)
 
     @abstractmethod
@@ -65,6 +63,7 @@ class FormatNode:
         These expands will not be removed when contracting.
         """
         self._forced_expands = copy.deepcopy(expands)
+        self._enabled_expands.extend(expands)
 
     def init(self) -> None:
         """Initialize the node. Called after the node is created."""
