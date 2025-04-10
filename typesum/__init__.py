@@ -18,3 +18,8 @@ def obj_summary(obj: _fmt.Formattable) -> str:
             if fstr:
                 return fstr + " \033[31m(!)\033[m"
             return "..."
+
+
+def print_summary(obj: _fmt.Formattable) -> None:
+    """Print a short 'summary' string of the object."""
+    print(obj_summary(obj))  # noqa: T201
