@@ -6,6 +6,7 @@ from collections import Counter
 from typesum import _fmt
 from typesum._format_nodes import FormatNode, FormatResult, utils
 from typesum._utils import SaturatingInt
+from typesum.expands import Expand
 
 
 def _aggregate_objects(obj_nodes: typing.Iterable) -> Counter:
@@ -24,12 +25,16 @@ class RaIterable(FormatNode):
     """Format a random-access iterable (has iter, len, getindex)."""
 
     def __init__(self, obj: typing.Any) -> None:  # FIXME: require Sized & Iterable
+        super().__init__(
+            obj,
+            expands=[
+                Expand.FULL_VALUE,
+                Expand.AGGREGATE,
+                Expand.SIZE,
+            ],
+        )
+
         self.obj = obj
-        # 0 - print every array element
-        # 1 - print a short form (1*{int}, 2*{float}, ...)
-        # 2 - print only type and size
-        # 3 - print only type
-        self.contraction_level = SaturatingInt(0, 3)
 
         # generate format nodes for each element
         self._generate_obj_nodes()
@@ -39,37 +44,27 @@ class RaIterable(FormatNode):
         #       of them
         self.obj_nodes = [utils.create_format_node(o) for o in self.obj]
 
-    def contract(self) -> bool:
+    def _contract_children(self) -> bool:
         # First, contract all the children. If no child can be
         # contracted, start contracting us.
         any_child_contracted = False
         for on in self.obj_nodes:
             if on.contract():
                 any_child_contracted = True
-        if any_child_contracted:
-            return True
-        if self.contraction_level.val == 0:
-            # This is to reset child contraction, as we'd like
-            # to contract them again
-            self._generate_obj_nodes()
-
-        return self.contraction_level.inc()
+        return any_child_contracted
 
     def format(self) -> FormatResult:
-        type_name = type(self.obj).__name__
+        type_name = _fmt.type_(type(self.obj).__name__)
 
-        match self.contraction_level.val:
-            case 0:
-                return f"{_fmt.type_(type_name)}[{
-                    ', '.join(on.format() or '...' for on in self.obj_nodes)
-                }]"
-            case 1:
-                return f"{_fmt.type_(type_name)}[{
-                    _aggregate_and_format_objects(self.obj_nodes)
-                }]"
-            case 2:
-                return f"{_fmt.type_(type_name)}[{len(self.obj)}]"
-            case 3:
-                return f"{_fmt.type_(type_name)}"
+        if self._has_expand(Expand.FULL_VALUE):
+            return f"{type_name}[{
+                ', '.join(on.format() or '...' for on in self.obj_nodes)
+            }]"
 
-        return None
+        if self._has_expand(Expand.AGGREGATE):
+            return f"{type_name}[{_aggregate_and_format_objects(self.obj_nodes)}]"
+
+        if self._has_expand(Expand.SIZE):
+            return f"{type_name}[{_fmt.number(len(self.obj))}]"
+
+        return type_name

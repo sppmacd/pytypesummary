@@ -1,6 +1,6 @@
 from typesum import _fmt
 from typesum._format_nodes import FormatNode, FormatResult
-from typesum._utils import SaturatingInt
+from typesum.expands import Expand
 
 
 class Default(FormatNode):
@@ -10,16 +10,10 @@ class Default(FormatNode):
     """
 
     def __init__(self, obj: _fmt.Formattable) -> None:
-        self.obj = obj
-        self.contraction_level = SaturatingInt(0, 1)
-
-    def contract(self) -> bool:
-        return self.contraction_level.inc()
+        super().__init__(obj, expands=[Expand.FULL_VALUE])
 
     def format(self) -> FormatResult:
-        match self.contraction_level.val:
-            case 0:
-                return repr(self.obj)
-            case 1:
-                return _fmt.type_(type(self.obj).__name__)
-        return None
+        if self._has_expand(Expand.FULL_VALUE):
+            return repr(self.obj)
+
+        return _fmt.type_(type(self.obj).__name__)

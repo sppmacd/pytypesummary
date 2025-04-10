@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import copy
 from abc import abstractmethod
+from typing import TYPE_CHECKING
 
-from typesum import _fmt
-from typesum._utils import SaturatingInt
+if TYPE_CHECKING:
+    from typesum import _fmt
+    from typesum.expands import Expand
 
 FormatResult = str | None
 
@@ -15,6 +18,18 @@ class FormatNode:
 
     TODO: docs
     """
+
+    """List of supported "expands" ("fields" which will be printed
+    in full). For example, we may print the full value ('full'),
+    or type ('type'), or both (['full', 'type']). When contracting,
+    the expands will be disabled one by one."""
+    _expands: list[Expand]
+    _enabled_expands: list[Expand]
+
+    def __init__(self, obj: _fmt.Formattable, *, expands: list[Expand]) -> None:
+        self.obj = obj
+        self._expands = expands
+        self._enabled_expands = copy.deepcopy(expands)
 
     @abstractmethod
     def format(self) -> FormatResult:
@@ -28,6 +43,29 @@ class FormatNode:
     def contract(self) -> bool:
         """Make the node return a shorter representation in `format`.
 
-        Returns `False` it its not possible anymore.
+        Returns `False` if contraction is not possible anymore.
+        """
+        # First, try contracting children
+        if self._contract_children():
+            return True
+
+        # Then, contract us by removing the first expand.
+        if self._enabled_expands:
+            self._enabled_expands.pop(0)
+            return True
+
+        # Finally, if we can't contract anymore, return False.
+        return False
+
+    def _has_expand(self, expand: Expand) -> bool:
+        """Check if the expand is enabled."""
+        return expand in self._enabled_expands
+
+    def _contract_children(self) -> bool:
+        """Overridden by derived nodes to contract their children.
+
+        Used for lists, dicts etc.
+
+        Returns `False` if contraction is not possible anymore.
         """
         return False
