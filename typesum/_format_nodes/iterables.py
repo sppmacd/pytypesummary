@@ -13,7 +13,7 @@ def _aggregate_objects(obj_nodes: typing.Iterable) -> Counter:
 
 
 def _format_aggregated_types(agg_objs: Counter) -> str:
-    return ", ".join(f"{_fmt.type_(v)}*{{{k}}}" for k, v in agg_objs.items())
+    return ", ".join(f"{_fmt.number(v)}*{{{k}}}" for k, v in agg_objs.items())
 
 
 def _aggregate_and_format_objects(obj_nodes: typing.Iterable) -> str:
