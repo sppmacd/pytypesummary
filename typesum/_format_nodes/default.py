@@ -13,7 +13,9 @@ class Default(FormatNode):
         super().__init__(obj, expands=[Expand.FULL_VALUE])
 
     def format(self) -> FormatResult:
+        type_name = _fmt.type_(type(self.obj).__name__)
         if self._has_expand(Expand.FULL_VALUE):
+            if self._has_expand(Expand.TYPE):
+                return f"{type_name}({self.obj!r})"
             return repr(self.obj)
-
-        return _fmt.type_(type(self.obj).__name__)
+        return type_name

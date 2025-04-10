@@ -21,6 +21,7 @@ if __name__ == "__main__":
     complex_list = ([*range(15), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, "test", [], {}],)
     print_summary(complex_list)
     print_summary(complex_list, expand=[Expand.AGGREGATE])
+    print_summary(complex_list[0][:5], expand=[Expand.TYPE])
 
     # NumPy
     print_summary(np.array([[1, 2, 3], [4, 5, 6]]))
