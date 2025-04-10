@@ -192,7 +192,10 @@ class _FormatNodePandasDataFrame(FormatNode):
         self.obj = obj
 
     def format(self) -> str | None:
-        return f"{_fmt.type_('DataFrame')}({_fmt.number(len(self.obj))}*{{[{
+        idx_string = (
+            f"{self.obj.index.name}->" if self.obj.index.name is not None else ""
+        )
+        return f"{_fmt.type_('DataFrame')}({idx_string}{_fmt.number(len(self.obj))}*{{[{
             ', '.join(self.obj.columns)
         }]}})"
 
