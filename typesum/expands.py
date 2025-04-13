@@ -11,9 +11,10 @@ class Expand(Enum):
 
     # Aggregate (count) array elements
     AGGREGATE = "aggregate"
-    # Print the entire value of an object (entire string,every element
-    # of an array, etc.)
-    FULL_VALUE = "full_value"
+    # Always print the value of an object
+    VALUE = "value"
+    # Print all array members
+    ALL_ARRAY_MEMBERS = "all_array_members"
     # Print the long contracted string (15 chars)
     LONG_STRING = "long_string"
     # Print the short contracted string (6 chars)

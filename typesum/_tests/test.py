@@ -85,11 +85,15 @@ class TestNumPy(TestCase):
                         [[[1, 10], [2, 20], [3, 30]], [[4, 40], [5, 50], [6, 60]]],
                     ),
                 ),
-                expand=[Expand.SIZE, Expand.FULL_VALUE],
+                expand=[Expand.SIZE],
             ),
-            "tuple[ndarray((2, 3)*{int64})), ndarray((2, 3, 2)*{int64}))]",
+            "tuple[2]",
+            # FIXME: I don't like this output. This is because
+            # the default output (with all sizes) is too long, and we
+            # can't contract SIZE, so we contract ALL_ARRAY_MEMBERS
+            # instead. Maybe we shouldn't contract a default expand just
+            # because of an forced expand?
         )
-
         self.assertEqual(
             obj_summary(np.zeros((100, 100, 100))),
             "ndarray((100, 100, 100)*{float64}))",

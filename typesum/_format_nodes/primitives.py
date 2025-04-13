@@ -9,11 +9,11 @@ class Str(FormatNode):
     def __init__(self, obj: str) -> None:
         super().__init__(
             obj,
-            expands=[Expand.FULL_VALUE, Expand.LONG_STRING],
+            expands=[Expand.VALUE, Expand.LONG_STRING],
         )
 
     def format(self) -> FormatResult:
-        if self._has_expand(Expand.FULL_VALUE):
+        if self._has_expand(Expand.VALUE):
             obj_repr = f'"{self.obj}"'
             return f"{_fmt.string(obj_repr)}"
 

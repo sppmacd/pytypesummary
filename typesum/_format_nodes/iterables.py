@@ -27,7 +27,7 @@ class RaIterable(FormatNode):
         super().__init__(
             obj,
             expands=[
-                Expand.FULL_VALUE,
+                Expand.ALL_ARRAY_MEMBERS,
                 Expand.SIZE,
             ],
         )
@@ -54,7 +54,7 @@ class RaIterable(FormatNode):
     def format(self) -> FormatResult:
         type_name = _fmt.type_(type(self.obj).__name__)
 
-        if self._has_expand(Expand.FULL_VALUE):
+        if self._has_expand(Expand.ALL_ARRAY_MEMBERS):
             return f"{type_name}[{
                 ', '.join(on.format() or '...' for on in self.obj_nodes)
             }]"
