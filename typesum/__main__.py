@@ -46,5 +46,6 @@ if __name__ == "__main__":
     print_summary(pd.DataFrame({"a": [1, 2], "b": [3, 4]}).set_index("a"))
 
     # TODO: Pandas Series
+    print_summary(pd.Series([1, 2, 3, 4, 5]))
 
     # TODO: PyTorch tensors

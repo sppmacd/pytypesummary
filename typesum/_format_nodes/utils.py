@@ -21,6 +21,8 @@ def create_format_node(obj, *, expand: list[Expand]) -> FormatNode:
         o = numpy.Array(obj)
     elif type(obj).__name__ == "DataFrame":
         o = pandas.DataFrame(obj)
+    elif type(obj).__name__ == "Series":
+        o = pandas.Series(obj)
     else:
         o = default.Default(obj)
 
