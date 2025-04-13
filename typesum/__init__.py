@@ -38,7 +38,7 @@ def obj_summary(
             return fstr
         if not fn.contract():
             if fstr:
-                return fstr + " \033[31m(!)\033[m"
+                return fstr + " \033[31m(!)\033[m" if _fmt.enable_fmt else fstr
             return "..."
 
 

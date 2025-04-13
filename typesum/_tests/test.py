@@ -1,0 +1,145 @@
+"""Some tests."""  # noqa: INP001
+
+# ruff: noqa: ANN201 (return type annotations)
+# ruff: noqa: D101, D102 (docstrings)
+# ruff: noqa: PT009 (assertEqual)
+
+from unittest import TestCase
+
+import numpy as np
+import pandas as pd
+
+import typesum._fmt
+from typesum import obj_summary
+from typesum.expands import Expand
+
+typesum._fmt.enable_fmt = False  # noqa: SLF001
+typesum.MAX_LENGTH = 55
+
+
+class TestDefault(TestCase):
+    def test(self):
+        self.assertEqual(obj_summary(1), "1")
+
+
+class TestStr(TestCase):
+    def test(self):
+        self.assertEqual(obj_summary("TEST"), '"TEST"')
+        self.assertEqual(obj_summary("TESTGGGGGGGGGGGGGGGG"), '"TESTGGGGGGGGGGGGGGGG"')
+        self.assertEqual(obj_summary("12345612345612345"), '"12345612345612345"')
+        self.assertEqual(obj_summary("123456123456123456"), '"123456123456123456"')
+        self.assertEqual(obj_summary("1234561234561234567"), '"1234561234561234567"')
+
+
+class TestIterable(TestCase):
+    def test_list(self):
+        self.assertEqual(obj_summary([1, 2.0, 3]), "list[1, 2.0, 3]")
+        self.assertEqual(obj_summary([1, 2, "test", 4]), 'list[1, 2, "test", 4]')
+        self.assertEqual(
+            obj_summary([1, 2, ["test"], 4]),
+            'list[1, 2, list["test"], 4]',
+        )
+        self.assertEqual(
+            obj_summary([1, 2, ["test"], 4, 5, 6, ["test2"], "testaaaaggggaaaaa3"]),
+            "list[int, int, list[1], int, int, int, list[1], str]",
+        )
+
+    def test_range(self):
+        self.assertEqual(obj_summary(range(100)), "range(0, 100)")
+
+    def test_tuple(self):
+        complex_list = ([*range(15), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, "test", [], {}],)
+        self.assertEqual(obj_summary(complex_list), "tuple[list[24]]")
+        self.assertEqual(
+            obj_summary(complex_list, expand=[Expand.AGGREGATE]),
+            "tuple[1*{list[15*{int}, 6*{float}, 1*{str}, 1*{list[]}, 1*{dict}]}]",
+        )
+        self.assertEqual(
+            obj_summary(complex_list[0][:5], expand=[Expand.TYPE]),
+            "list[int(0), int(1), int(2), int(3), int(4)]",
+        )
+
+
+class TestNumPy(TestCase):
+    def test_array(self):
+        self.assertEqual(
+            obj_summary(np.array([[1, 2, 3], [4, 5, 6]])),
+            "ndarray((2, 3)*{int64}))",
+        )
+        self.assertEqual(
+            obj_summary(
+                (
+                    np.array([[1, 2, 3], [4, 5, 6]]),
+                    np.array(
+                        [[[1, 10], [2, 20], [3, 30]], [[4, 40], [5, 50], [6, 60]]],
+                    ),
+                ),
+            ),
+            "tuple[ndarray(int64), ndarray(int64)]",
+        )
+        self.assertEqual(
+            obj_summary(
+                (
+                    np.array([[1, 2, 3], [4, 5, 6]]),
+                    np.array(
+                        [[[1, 10], [2, 20], [3, 30]], [[4, 40], [5, 50], [6, 60]]],
+                    ),
+                ),
+                expand=[Expand.SIZE, Expand.FULL_VALUE],
+            ),
+            "tuple[ndarray((2, 3)*{int64})), ndarray((2, 3, 2)*{int64}))]",
+        )
+
+        self.assertEqual(
+            obj_summary(np.zeros((100, 100, 100))),
+            "ndarray((100, 100, 100)*{float64}))",
+        )
+
+    def test_generic(self):
+        self.assertEqual(
+            obj_summary(
+                [
+                    np.int8(-1),
+                    np.int16(-10),
+                    np.int32(-100),
+                    np.int64(-1000),
+                ],
+            ),
+            "list[-1i8, -10i16, -100i32, -1000i64]",
+        )
+        self.assertEqual(
+            obj_summary(
+                [
+                    np.uint8(1),
+                    np.uint16(10),
+                    np.uint32(100),
+                    np.uint64(1000),
+                ],
+            ),
+            "list[1u8, 10u16, 100u32, 1000u64]",
+        )
+        self.assertEqual(
+            obj_summary(
+                [
+                    np.float16(1.2),
+                    np.float32(3.4),
+                    np.float64(5.67),
+                ],
+            ),
+            "list[1.2001953125f16, 3.4000000953674316f32, 5.67f64]",
+        )
+
+
+class TestPandas(TestCase):
+    def test_dataframe(self):
+        self.assertEqual(
+            obj_summary(pd.DataFrame({"a": [1, 2], "b": [3, 4]})),
+            "DataFrame(2*{[a, b]})",
+        )
+        self.assertEqual(
+            obj_summary(pd.DataFrame({"a": [1, 2], "b": [3, 4]}).set_index("a")),
+            "DataFrame(a->2*{[b]})",
+        )
+
+    def test_series(self):
+        self.assertEqual(obj_summary(pd.Series([1, 2, 3, 4, 5])), "Series(5*{int64})")
