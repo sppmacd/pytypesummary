@@ -5,7 +5,6 @@ from collections import Counter
 
 from typesum import _fmt
 from typesum._format_nodes import FormatNode, FormatResult, utils
-from typesum._utils import SaturatingInt
 from typesum.expands import Expand
 
 

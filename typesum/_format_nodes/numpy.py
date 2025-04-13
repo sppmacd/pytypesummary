@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 
 from typesum import _fmt
 from typesum._format_nodes import FormatNode, FormatResult
-from typesum._utils import SaturatingInt
 from typesum.expands import Expand
 
 if TYPE_CHECKING:
