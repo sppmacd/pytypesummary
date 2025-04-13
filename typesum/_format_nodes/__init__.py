@@ -64,6 +64,19 @@ class FormatNode:
         """
         self._forced_expands = copy.deepcopy(expands)
         self._enabled_expands.extend(expands)
+        self._remove_duplicated_expands()
+
+    def _remove_duplicated_expands(self) -> None:
+        # keep every expand only once, at the position it was first
+        # encountered
+        new_expands = []
+        seen_expands = set()
+        for exp in self._enabled_expands:
+            if exp in seen_expands:
+                continue
+            new_expands.append(exp)
+            seen_expands.add(exp)
+        self._enabled_expands = new_expands
 
     def init(self) -> None:
         """Initialize the node. Called after the node is created."""
