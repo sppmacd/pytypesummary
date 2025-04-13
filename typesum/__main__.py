@@ -40,12 +40,33 @@ if __name__ == "__main__":
     )
 
     print_summary(np.zeros((100, 100, 100)))
+    print_summary(
+        [
+            np.int8(-1),
+            np.int16(-10),
+            np.int32(-100),
+            np.int64(-1000),
+        ],
+    )
+    print_summary(
+        [
+            np.uint8(1),
+            np.uint16(10),
+            np.uint32(100),
+            np.uint64(1000),
+        ],
+    )
+    print_summary(
+        [
+            np.float16(1.2),
+            np.float32(3.4),
+            np.float64(5.67),
+        ],
+    )
 
     # Pandas
     print_summary(pd.DataFrame({"a": [1, 2], "b": [3, 4]}))
     print_summary(pd.DataFrame({"a": [1, 2], "b": [3, 4]}).set_index("a"))
-
-    # TODO: Pandas Series
     print_summary(pd.Series([1, 2, 3, 4, 5]))
 
     # TODO: PyTorch tensors

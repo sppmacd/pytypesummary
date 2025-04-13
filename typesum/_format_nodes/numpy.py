@@ -28,3 +28,21 @@ class Array(FormatNode):
             }}}))"
 
         return f"{type_name}({self.obj.dtype})"
+
+
+class Generic(FormatNode):
+    """Format numpy.generic types (scalars)."""
+
+    def __init__(self, obj: np.generic) -> None:
+        super().__init__(
+            obj,
+            expands=[],
+        )
+
+    def format(self) -> FormatResult:
+        dtype_name = str(self.obj.dtype)
+        # replace int -> i, uint -> u, float -> f
+        dtype_name = (
+            dtype_name.replace("uint", "u").replace("int", "i").replace("float", "f")
+        )
+        return f"{_fmt.number(self.obj.item())}{(dtype_name)}"
