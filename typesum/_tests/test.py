@@ -11,7 +11,6 @@ import pandas as pd
 
 import typesum._fmt
 from typesum import obj_summary
-from typesum.expands import Expand
 
 typesum._fmt.enable_fmt = False  # noqa: SLF001
 typesum.MAX_LENGTH = 55
@@ -51,11 +50,11 @@ class TestIterable(TestCase):
         complex_list = ([*range(15), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, "test", [], {}],)
         self.assertEqual(obj_summary(complex_list), "tuple[list[24]]")
         self.assertEqual(
-            obj_summary(complex_list, expand=[Expand.AGGREGATE]),
+            obj_summary(complex_list, expand=["aggregate"]),
             "tuple[1*{list[15*{int}, 6*{float}, 1*{str}, 1*{list[]}, 1*{dict}]}]",
         )
         self.assertEqual(
-            obj_summary(complex_list[0][:5], expand=[Expand.TYPE]),
+            obj_summary(complex_list[0][:5], expand=["type"]),
             "list[int(0), int(1), int(2), int(3), int(4)]",
         )
 
@@ -85,7 +84,7 @@ class TestNumPy(TestCase):
                         [[[1, 10], [2, 20], [3, 30]], [[4, 40], [5, 50], [6, 60]]],
                     ),
                 ),
-                expand=[Expand.SIZE],
+                expand=["size"],
             ),
             "tuple[2]",
             # FIXME: I don't like this output. This is because
@@ -147,3 +146,9 @@ class TestPandas(TestCase):
 
     def test_series(self):
         self.assertEqual(obj_summary(pd.Series([1, 2, 3, 4, 5])), "Series(5*{int64})")
+
+
+class TestExpand(TestCase):
+    def test_invalid_expand(self):
+        with self.assertRaises(ValueError):  # noqa: PT027
+            obj_summary([1, 2, 3], expand=["invalid_expand"])

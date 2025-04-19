@@ -2,13 +2,9 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
+from typesum import _fmt
 from typesum._format_nodes import utils
-
-if TYPE_CHECKING:
-    from typesum import _fmt
-    from typesum.expands import Expand
+from typesum.expands import Expand
 
 MAX_LENGTH = 130
 
@@ -16,7 +12,7 @@ MAX_LENGTH = 130
 def obj_summary(
     obj: _fmt.Formattable,
     *,
-    expand: list[Expand] | None = None,
+    expand: list[Expand | str] | None = None,
 ) -> str:
     """Generate a short 'summary' string of the object.
 
@@ -30,7 +26,9 @@ def obj_summary(
     if not expand:
         expand = []
 
-    fn = utils.create_format_node(obj, expand=expand)
+    expand_enum: list[Expand] = [Expand(e) if isinstance(e, str) else e for e in expand]
+
+    fn = utils.create_format_node(obj, expand=expand_enum)
 
     while True:
         fstr = fn.format()
@@ -42,6 +40,10 @@ def obj_summary(
             return "..."
 
 
-def print_summary(obj: _fmt.Formattable, *, expand: list[Expand] | None = None) -> None:
+def print_summary(
+    obj: _fmt.Formattable,
+    *,
+    expand: list[Expand | str] | None = None,
+) -> None:
     """Print a short 'summary' string of the object."""
     print(obj_summary(obj, expand=expand))  # noqa: T201
