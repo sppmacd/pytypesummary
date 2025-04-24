@@ -6,9 +6,6 @@
 
 from unittest import TestCase
 
-import numpy as np
-import pandas as pd
-
 import typesum._fmt
 from typesum import obj_summary
 
@@ -61,6 +58,12 @@ class TestIterable(TestCase):
 
 class TestNumPy(TestCase):
     def test_array(self):
+        import numpy as np
+
+        self.assertEqual(
+            obj_summary(np.array([4, 5, 6])),
+            "ndarray((3,)*{int64}))",
+        )
         self.assertEqual(
             obj_summary(np.array([[1, 2, 3], [4, 5, 6]])),
             "ndarray((2, 3)*{int64}))",
@@ -99,6 +102,8 @@ class TestNumPy(TestCase):
         )
 
     def test_generic(self):
+        import numpy as np
+
         self.assertEqual(
             obj_summary(
                 [
@@ -135,6 +140,8 @@ class TestNumPy(TestCase):
 
 class TestPandas(TestCase):
     def test_dataframe(self):
+        import pandas as pd
+
         self.assertEqual(
             obj_summary(pd.DataFrame({"a": [1, 2], "b": [3, 4]})),
             "DataFrame(2*{[a, b]})",
@@ -145,7 +152,21 @@ class TestPandas(TestCase):
         )
 
     def test_series(self):
+        import pandas as pd
+
         self.assertEqual(obj_summary(pd.Series([1, 2, 3, 4, 5])), "Series(5*{int64})")
+
+
+class TestTorch(TestCase):
+    def test_tensor(self):
+        import torch
+
+        self.assertEqual(
+            obj_summary(
+                torch.tensor([1, 2, 3, 4, 5]),
+            ),
+            "tensor[cpu]((5,)*{int64})",
+        )
 
 
 class TestExpand(TestCase):

@@ -5,6 +5,7 @@ from typesum._format_nodes import (
     numpy,
     pandas,
     primitives,
+    torch,
 )
 from typesum.expands import Expand
 
@@ -31,6 +32,8 @@ def create_format_node(obj, *, expand: list[Expand]) -> FormatNode:
         o = pandas.DataFrame(obj)
     elif _is_instance_by_full_name(obj, "pandas.core.series.Series"):
         o = pandas.Series(obj)
+    elif _is_instance_by_full_name(obj, "torch.Tensor"):
+        o = torch.Tensor(obj)
     else:
         o = default.Default(obj)
 
