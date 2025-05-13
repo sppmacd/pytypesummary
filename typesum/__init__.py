@@ -9,7 +9,7 @@ from typesum.expands import Expand
 MAX_LENGTH = 130
 
 
-def obj_summary(
+def format_(
     obj: _fmt.Formattable,
     *,
     expand: list[Expand | str] | None = None,
@@ -40,10 +40,10 @@ def obj_summary(
             return "..."
 
 
-def print_summary(
+def print_(
     obj: _fmt.Formattable,
     *,
     expand: list[Expand | str] | None = None,
 ) -> None:
     """Print a short 'summary' string of the object."""
-    print(obj_summary(obj, expand=expand))  # noqa: T201
+    print(format_(obj, expand=expand))  # noqa: T201

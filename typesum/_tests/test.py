@@ -7,7 +7,7 @@
 from unittest import TestCase
 
 import typesum._fmt
-from typesum import obj_summary
+from typesum import format_
 
 typesum._fmt.enable_fmt = False  # noqa: SLF001
 typesum.MAX_LENGTH = 55
@@ -15,43 +15,43 @@ typesum.MAX_LENGTH = 55
 
 class TestDefault(TestCase):
     def test(self):
-        self.assertEqual(obj_summary(1), "1")
+        self.assertEqual(format_(1), "1")
 
 
 class TestStr(TestCase):
     def test(self):
-        self.assertEqual(obj_summary("TEST"), '"TEST"')
-        self.assertEqual(obj_summary("TESTGGGGGGGGGGGGGGGG"), '"TESTGGGGGGGGGGGGGGGG"')
-        self.assertEqual(obj_summary("12345612345612345"), '"12345612345612345"')
-        self.assertEqual(obj_summary("123456123456123456"), '"123456123456123456"')
-        self.assertEqual(obj_summary("1234561234561234567"), '"1234561234561234567"')
+        self.assertEqual(format_("TEST"), '"TEST"')
+        self.assertEqual(format_("TESTGGGGGGGGGGGGGGGG"), '"TESTGGGGGGGGGGGGGGGG"')
+        self.assertEqual(format_("12345612345612345"), '"12345612345612345"')
+        self.assertEqual(format_("123456123456123456"), '"123456123456123456"')
+        self.assertEqual(format_("1234561234561234567"), '"1234561234561234567"')
 
 
 class TestIterable(TestCase):
     def test_list(self):
-        self.assertEqual(obj_summary([1, 2.0, 3]), "list[1, 2.0, 3]")
-        self.assertEqual(obj_summary([1, 2, "test", 4]), 'list[1, 2, "test", 4]')
+        self.assertEqual(format_([1, 2.0, 3]), "list[1, 2.0, 3]")
+        self.assertEqual(format_([1, 2, "test", 4]), 'list[1, 2, "test", 4]')
         self.assertEqual(
-            obj_summary([1, 2, ["test"], 4]),
+            format_([1, 2, ["test"], 4]),
             'list[1, 2, list["test"], 4]',
         )
         self.assertEqual(
-            obj_summary([1, 2, ["test"], 4, 5, 6, ["test2"], "testaaaaggggaaaaa3"]),
+            format_([1, 2, ["test"], 4, 5, 6, ["test2"], "testaaaaggggaaaaa3"]),
             "list[int, int, list[1], int, int, int, list[1], str]",
         )
 
     def test_range(self):
-        self.assertEqual(obj_summary(range(100)), "range(0, 100)")
+        self.assertEqual(format_(range(100)), "range(0, 100)")
 
     def test_tuple(self):
         complex_list = ([*range(15), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, "test", [], {}],)
-        self.assertEqual(obj_summary(complex_list), "tuple[list[24]]")
+        self.assertEqual(format_(complex_list), "tuple[list[24]]")
         self.assertEqual(
-            obj_summary(complex_list, expand=["aggregate"]),
+            format_(complex_list, expand=["aggregate"]),
             "tuple[1*{list[15*{int}, 6*{float}, 1*{str}, 1*{list[]}, 1*{dict}]}]",
         )
         self.assertEqual(
-            obj_summary(complex_list[0][:5], expand=["type"]),
+            format_(complex_list[0][:5], expand=["type"]),
             "list[int(0), int(1), int(2), int(3), int(4)]",
         )
 
@@ -61,15 +61,15 @@ class TestNumPy(TestCase):
         import numpy as np
 
         self.assertEqual(
-            obj_summary(np.array([4, 5, 6])),
-            "ndarray((3,)*{int64}))",
+            format_(np.array([4, 5, 6])),
+            "ndarray((3,)*{int64})",
         )
         self.assertEqual(
-            obj_summary(np.array([[1, 2, 3], [4, 5, 6]])),
-            "ndarray((2, 3)*{int64}))",
+            format_(np.array([[1, 2, 3], [4, 5, 6]])),
+            "ndarray((2, 3)*{int64})",
         )
         self.assertEqual(
-            obj_summary(
+            format_(
                 (
                     np.array([[1, 2, 3], [4, 5, 6]]),
                     np.array(
@@ -80,7 +80,7 @@ class TestNumPy(TestCase):
             "tuple[ndarray(int64), ndarray(int64)]",
         )
         self.assertEqual(
-            obj_summary(
+            format_(
                 (
                     np.array([[1, 2, 3], [4, 5, 6]]),
                     np.array(
@@ -97,15 +97,15 @@ class TestNumPy(TestCase):
             # because of an forced expand?
         )
         self.assertEqual(
-            obj_summary(np.zeros((100, 100, 100))),
-            "ndarray((100, 100, 100)*{float64}))",
+            format_(np.zeros((100, 100, 100))),
+            "ndarray((100, 100, 100)*{float64})",
         )
 
     def test_generic(self):
         import numpy as np
 
         self.assertEqual(
-            obj_summary(
+            format_(
                 [
                     np.int8(-1),
                     np.int16(-10),
@@ -116,7 +116,7 @@ class TestNumPy(TestCase):
             "list[-1i8, -10i16, -100i32, -1000i64]",
         )
         self.assertEqual(
-            obj_summary(
+            format_(
                 [
                     np.uint8(1),
                     np.uint16(10),
@@ -127,7 +127,7 @@ class TestNumPy(TestCase):
             "list[1u8, 10u16, 100u32, 1000u64]",
         )
         self.assertEqual(
-            obj_summary(
+            format_(
                 [
                     np.float16(1.2),
                     np.float32(3.4),
@@ -143,15 +143,15 @@ class TestPandas(TestCase):
         import pandas as pd
 
         self.assertEqual(
-            obj_summary(pd.DataFrame({"a": [1, 2], "b": [3, 4]})),
+            format_(pd.DataFrame({"a": [1, 2], "b": [3, 4]})),
             "DataFrame(2*{[a, b]})",
         )
         self.assertEqual(
-            obj_summary(pd.DataFrame({"a": [1, 2], "b": [3, 4]}).set_index("a")),
+            format_(pd.DataFrame({"a": [1, 2], "b": [3, 4]}).set_index("a")),
             "DataFrame(a->2*{[b]})",
         )
         self.assertEqual(
-            obj_summary(
+            format_(
                 pd.DataFrame({"a": [1, 2], "b": [3, 4]}).set_index("a"),
                 expand=["type"],
             ),
@@ -161,7 +161,7 @@ class TestPandas(TestCase):
     def test_series(self):
         import pandas as pd
 
-        self.assertEqual(obj_summary(pd.Series([1, 2, 3, 4, 5])), "Series(5*{int64})")
+        self.assertEqual(format_(pd.Series([1, 2, 3, 4, 5])), "Series(5*{int64})")
 
 
 class TestTorch(TestCase):
@@ -169,7 +169,7 @@ class TestTorch(TestCase):
         import torch
 
         self.assertEqual(
-            obj_summary(
+            format_(
                 torch.tensor([1, 2, 3, 4, 5]),
             ),
             "tensor[cpu]((5,)*{int64})",
@@ -179,4 +179,4 @@ class TestTorch(TestCase):
 class TestExpand(TestCase):
     def test_invalid_expand(self):
         with self.assertRaises(ValueError):  # noqa: PT027
-            obj_summary([1, 2, 3], expand=["invalid_expand"])
+            format_([1, 2, 3], expand=["invalid_expand"])
