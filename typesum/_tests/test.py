@@ -150,6 +150,13 @@ class TestPandas(TestCase):
             obj_summary(pd.DataFrame({"a": [1, 2], "b": [3, 4]}).set_index("a")),
             "DataFrame(a->2*{[b]})",
         )
+        self.assertEqual(
+            obj_summary(
+                pd.DataFrame({"a": [1, 2], "b": [3, 4]}).set_index("a"),
+                expand=["type"],
+            ),
+            "DataFrame(a->2*{[b: int64]})",
+        )
 
     def test_series(self):
         import pandas as pd

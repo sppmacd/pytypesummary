@@ -25,11 +25,18 @@ class DataFrame(FormatNode):
         if not self._has_expand(Expand.COLUMNS):
             return type_name
 
+        def format_column(col, dtype):
+            if self._has_expand(Expand.TYPE):
+                return f"{col}: {_fmt.type_(dtype)}"
+            return col
+
         idx_string = (
             f"{self.obj.index.name}->" if self.obj.index.name is not None else ""
         )
         return f"{type_name}({idx_string}{_fmt.number(len(self.obj))}*{{[{
-            ', '.join(self.obj.columns)
+            ', '.join(
+                format_column(c, d) for c, d in zip(self.obj.columns, self.obj.dtypes)
+            )
         }]}})"
 
 
