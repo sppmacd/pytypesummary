@@ -24,7 +24,7 @@ class Array(FormatNode):
         if self._has_expand(Expand.SIZE):
             return f"{type_name}({_fmt.number(self.obj.shape)}*{{{
                 _fmt.type_(self.obj.dtype)
-            }}}))"
+            }}})"
 
         return f"{type_name}({self.obj.dtype})"
 
