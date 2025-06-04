@@ -1,29 +1,50 @@
-"""A list of used expands."""
+"""Contains Expand enum."""
 
 from enum import Enum
 
 
 class Expand(Enum):
-    """Expand enum.
+    """A list of defined Expands.
 
-    TODO: docs
+    Expands allows the user to specify additional data that can be
+    printed by the formatter. The supported expands differ by object
+    type.
+
+    They are typically passed as array to format() or print():
+    ```
+    typesum.format(obj, expand=["value", "type"])`
+    ```
+
+    You can also use the Expand enum directly:
+    ```
+    from typesum.expands import Expand
+    typesum.format(obj, expand=[Expand.VALUE, Expand.TYPE])
+    ```
     """
 
-    # Aggregate (count) array elements
     AGGREGATE = "aggregate"
-    # Print all array members
+    """Aggregate (count) array elements"""
+
     ALL_ARRAY_MEMBERS = "all_array_members"
-    # Print column names (for dataframes)
+    """Print all array members"""
+
     COLUMNS = "columns"
-    # Print device (for Torch tensors)
+    """Print column names (for dataframes)"""
+
     DEVICE = "device"
-    # Print the long contracted string (15 chars)
+    """Print device (for Torch tensors)"""
+
     LONG_STRING = "long_string"
-    # Print the short contracted string (6 chars)
+    """Print the long contracted string (15 chars)"""
+
     SHORT_STRING = "short_string"
-    # Print array size/shape
+    """Print the short contracted string (6 chars)"""
+
     SIZE = "size"
-    # Print object's type (usually only if value was not printed)
+    """Print array size/shape"""
+
     TYPE = "type"
-    # Always print the value of an object
+    """Print object's type (usually only if value was not printed)"""
+
     VALUE = "value"
+    """Always print the value of an object"""
