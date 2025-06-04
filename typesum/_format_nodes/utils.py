@@ -20,20 +20,21 @@ def _is_instance_by_full_name(obj, name: str) -> bool:
 
 def create_format_node(obj, *, expand: list[Expand]) -> FormatNode:
     o: FormatNode
+
     if isinstance(obj, str):
         o = primitives.Str(obj)
     elif isinstance(obj, (list, tuple)):
         o = iterables.RaIterable(obj)
     elif _is_instance_by_full_name(obj, "numpy.ndarray"):
-        o = numpy.Array(obj)
+        o = numpy.Array(obj)  # type: ignore[name-defined]
     elif _is_instance_by_full_name(obj, "numpy.generic"):
-        o = numpy.Generic(obj)
+        o = numpy.Generic(obj)  # type: ignore[name-defined]
     elif _is_instance_by_full_name(obj, "pandas.core.frame.DataFrame"):
-        o = pandas.DataFrame(obj)
+        o = pandas.DataFrame(obj)  # type: ignore[name-defined]
     elif _is_instance_by_full_name(obj, "pandas.core.series.Series"):
-        o = pandas.Series(obj)
+        o = pandas.Series(obj)  # type: ignore[name-defined]
     elif _is_instance_by_full_name(obj, "torch.Tensor"):
-        o = torch.Tensor(obj)
+        o = torch.Tensor(obj)  # type: ignore[name-defined]
     else:
         o = default.Default(obj)
 

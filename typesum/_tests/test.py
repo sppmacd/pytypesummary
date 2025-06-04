@@ -37,9 +37,16 @@ formatter = Formatter(
 )
 
 
-class TestDefault(TestCase):
-    def test(self):
+class TestNumber(TestCase):
+    def test_int(self):
         self.assertEqual(formatter.format(1), "1")
+
+    def test_float(self):
+        self.assertEqual(formatter.format(1.0), "1.0")
+        self.assertEqual(formatter.format(1.23456789), "1.23456789")
+
+    def test_complex(self):
+        self.assertEqual(formatter.format(1 + 2j), "(1+2j)")
 
 
 class TestStr(TestCase):

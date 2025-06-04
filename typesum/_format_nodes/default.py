@@ -15,7 +15,14 @@ class Default(FormatNode):
     def format(self, style: _fmt.Style) -> FormatResult:
         type_name = style.type_(type(self.obj).__name__)
         if self._has_expand(Expand.VALUE):
+            style_func = (
+                style.number if isinstance(self.obj, (int, float, complex)) else None
+            )
+
+            obj_repr = style_func(repr(self.obj)) if style_func else repr(self.obj)
+
             if self._has_expand(Expand.TYPE):
-                return f"{type_name}({self.obj!r})"
-            return repr(self.obj)
+                return f"{type_name}({obj_repr})"
+            return obj_repr
+
         return type_name
