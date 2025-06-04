@@ -94,7 +94,7 @@ class TestIterable(TestCase):
         )
         self.assertEqual(
             formatter.format(complex_list, expand=["aggregate"]),
-            "tuple[1*{list[15*{int}, 6*{float}, 1*{str}, 1*{list[]}, 1*{dict}]}] (!)",
+            "tuple[1*{list[15*{int}, 6*{float}, 1*{dict}, 1*{list[]}, 1*{str}]}] (!)",
         )
         self.assertEqual(
             formatter.format(complex_list[0][:5], expand=["type"]),

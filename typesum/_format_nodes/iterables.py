@@ -15,7 +15,9 @@ def _aggregate_objects(obj_nodes: typing.Iterable, style: _fmt.Style) -> Counter
 
 
 def _format_aggregated_types(agg_objs: Counter, *, style: _fmt.Style) -> str:
-    return ", ".join(f"{style.number(v)}*{{{k}}}" for k, v in agg_objs.items())
+    # Make order stable: sort by value, then by key
+    agg_objs_sorted = dict(sorted(agg_objs.items(), key=lambda x: (-x[1], x[0])))
+    return ", ".join(f"{style.number(v)}*{{{k}}}" for k, v in agg_objs_sorted.items())
 
 
 def _aggregate_and_format_objects(

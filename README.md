@@ -64,8 +64,8 @@ Count elements:
 >>> ts.print([1,1,2,2,3,3,1,2,3]*10, expand=["aggregate"])
 list(90)[90*{int}]
 
->>> ts.print([1,1,2,2,3,3,1,2,3]*10, expand=["aggregate", "value"])
-list(90)[30*{1}, 30*{2}, 30*{3}]
+>>> ts.print([1,1,2,2,3,3,1,2]*10, expand=["aggregate", "value"])
+list(80)[30*{1}, 30*{2}, 20*{3}]
 ```
 
 NumPy arrays:
