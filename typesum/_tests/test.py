@@ -1,5 +1,3 @@
-"""Some tests."""  # noqa: INP001
-
 # ruff: noqa: ANN201 (return type annotations)
 # ruff: noqa: D101, D102 (docstrings)
 # ruff: noqa: PT009 (assertEqual)
