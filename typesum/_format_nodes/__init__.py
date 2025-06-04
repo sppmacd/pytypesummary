@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typesum import _fmt
+    from typesum._fmt import Style
     from typesum.expands import Expand
 
 FormatResult = str | None
@@ -19,19 +20,22 @@ class FormatNode:
     TODO: docs
     """
 
-    """List of supported "expands" ("fields" which will be printed
-    in full). For example, we may print the full value ('full'),
-    or type ('type'), or both (['full', 'type']). When contracting,
-    the expands will be disabled one by one."""
     _enabled_expands: list[Expand]
+    """List of supported "expands" ("fields" which will be printed
+    in full). For example, we may print the full value (`full`),
+    or type (`type`), or both (`['full', 'type']`). When contracting,
+    the expands will be disabled one by one."""
+
     _forced_expands: list[Expand]
+    """Expands that can't be removed even when the string will be too
+    long after removing non-forced expands."""
 
     def __init__(self, obj: _fmt.Formattable, *, expands: list[Expand]) -> None:
         self.obj = obj
         self._enabled_expands = copy.deepcopy(expands)
 
     @abstractmethod
-    def format(self) -> FormatResult:
+    def format(self, style: Style) -> FormatResult:
         """Format the node.
 
         Returns None if the know that the string

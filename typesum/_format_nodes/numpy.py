@@ -2,12 +2,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from typesum import _fmt
 from typesum._format_nodes import FormatNode, FormatResult
 from typesum.expands import Expand
 
 if TYPE_CHECKING:
     import numpy as np
+
+    from typesum import _fmt
 
 
 class Array(FormatNode):
@@ -19,11 +20,11 @@ class Array(FormatNode):
             ],
         )
 
-    def format(self) -> FormatResult:
-        type_name = _fmt.type_("ndarray")
+    def format(self, style: _fmt.Style) -> FormatResult:
+        type_name = style.type_("ndarray")
         if self._has_expand(Expand.SIZE):
-            return f"{type_name}({_fmt.number(self.obj.shape)}*{{{
-                _fmt.type_(self.obj.dtype)
+            return f"{type_name}({style.number(self.obj.shape)}*{{{
+                style.type_(self.obj.dtype)
             }}})"
 
         return f"{type_name}({self.obj.dtype})"
@@ -38,10 +39,10 @@ class Generic(FormatNode):
             expands=[],
         )
 
-    def format(self) -> FormatResult:
+    def format(self, style: _fmt.Style) -> FormatResult:
         dtype_name = str(self.obj.dtype)
         # replace int -> i, uint -> u, float -> f
         dtype_name = (
             dtype_name.replace("uint", "u").replace("int", "i").replace("float", "f")
         )
-        return f"{_fmt.number(self.obj.item())}{(dtype_name)}"
+        return f"{style.number(self.obj.item())}{(dtype_name)}"

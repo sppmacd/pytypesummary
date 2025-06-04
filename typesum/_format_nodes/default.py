@@ -12,8 +12,8 @@ class Default(FormatNode):
     def __init__(self, obj: _fmt.Formattable) -> None:
         super().__init__(obj, expands=[Expand.VALUE])
 
-    def format(self) -> FormatResult:
-        type_name = _fmt.type_(type(self.obj).__name__)
+    def format(self, style: _fmt.Style) -> FormatResult:
+        type_name = style.type_(type(self.obj).__name__)
         if self._has_expand(Expand.VALUE):
             if self._has_expand(Expand.TYPE):
                 return f"{type_name}({self.obj!r})"

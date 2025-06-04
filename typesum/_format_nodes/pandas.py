@@ -2,12 +2,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from typesum import _fmt
 from typesum._format_nodes import FormatNode, FormatResult
 from typesum.expands import Expand
 
 if TYPE_CHECKING:
     import pandas as pd
+    from pandas.core.frame import Dtype
+
+    from typesum import _fmt
 
 
 class DataFrame(FormatNode):
@@ -19,21 +21,21 @@ class DataFrame(FormatNode):
             ],
         )
 
-    def format(self) -> FormatResult:
-        type_name = _fmt.type_("DataFrame")
+    def format(self, style: _fmt.Style) -> FormatResult:
+        type_name = style.type_("DataFrame")
 
         if not self._has_expand(Expand.COLUMNS):
             return type_name
 
-        def format_column(col, dtype):
+        def format_column(col: str, dtype: Dtype) -> str:
             if self._has_expand(Expand.TYPE):
-                return f"{col}: {_fmt.type_(dtype)}"
+                return f"{col}: {style.type_(dtype)}"
             return col
 
         idx_string = (
             f"{self.obj.index.name}->" if self.obj.index.name is not None else ""
         )
-        return f"{type_name}({idx_string}{_fmt.number(len(self.obj))}*{{[{
+        return f"{type_name}({idx_string}{style.number(len(self.obj))}*{{[{
             ', '.join(
                 format_column(c, d) for c, d in zip(self.obj.columns, self.obj.dtypes)
             )
@@ -47,14 +49,14 @@ class Series(FormatNode):
             expands=[Expand.SIZE, Expand.TYPE],
         )
 
-    def format(self) -> FormatResult:
-        type_name = _fmt.type_("Series")
+    def format(self, style: _fmt.Style) -> FormatResult:
+        type_name = style.type_("Series")
 
         formatted_size = (
-            _fmt.number(len(self.obj)) if self._has_expand(Expand.SIZE) else None
+            style.number(len(self.obj)) if self._has_expand(Expand.SIZE) else None
         )
         formatted_dtype = (
-            _fmt.type_(self.obj.dtype) if self._has_expand(Expand.TYPE) else None
+            style.type_(self.obj.dtype) if self._has_expand(Expand.TYPE) else None
         )
 
         if formatted_size and formatted_dtype:

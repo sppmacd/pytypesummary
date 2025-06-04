@@ -3,21 +3,27 @@ from __future__ import annotations
 import typing
 from collections import Counter
 
-from typesum import _fmt
 from typesum._format_nodes import FormatNode, FormatResult, utils
 from typesum.expands import Expand
 
-
-def _aggregate_objects(obj_nodes: typing.Iterable) -> Counter:
-    return Counter(a.format() or "..." for a in obj_nodes)
-
-
-def _format_aggregated_types(agg_objs: Counter) -> str:
-    return ", ".join(f"{_fmt.number(v)}*{{{k}}}" for k, v in agg_objs.items())
+if typing.TYPE_CHECKING:
+    from typesum import _fmt
 
 
-def _aggregate_and_format_objects(obj_nodes: typing.Iterable) -> str:
-    return _format_aggregated_types(_aggregate_objects(obj_nodes))
+def _aggregate_objects(obj_nodes: typing.Iterable, style: _fmt.Style) -> Counter:
+    return Counter(a.format(style) or "..." for a in obj_nodes)
+
+
+def _format_aggregated_types(agg_objs: Counter, *, style: _fmt.Style) -> str:
+    return ", ".join(f"{style.number(v)}*{{{k}}}" for k, v in agg_objs.items())
+
+
+def _aggregate_and_format_objects(
+    obj_nodes: typing.Iterable,
+    *,
+    style: _fmt.Style,
+) -> str:
+    return _format_aggregated_types(_aggregate_objects(obj_nodes, style), style=style)
 
 
 class RaIterable(FormatNode):
@@ -51,24 +57,27 @@ class RaIterable(FormatNode):
                 any_child_contracted = True
         return any_child_contracted
 
-    def format(self) -> FormatResult:
-        type_name = _fmt.type_(type(self.obj).__name__)
+    def format(self, style: _fmt.Style) -> FormatResult:
+        type_name = style.type_(type(self.obj).__name__)
 
         if self._has_expand(Expand.ALL_ARRAY_MEMBERS):
             return f"{type_name}[{
-                ', '.join(on.format() or '...' for on in self.obj_nodes)
+                ', '.join(on.format(style) or '...' for on in self.obj_nodes)
             }]"
 
         has_size = self._has_expand(Expand.SIZE)
 
         if self._has_expand(Expand.AGGREGATE):
             if has_size:
-                return f"{type_name}[{_fmt.number(len(self.obj))}: {
-                    _aggregate_and_format_objects(self.obj_nodes)
+                return f"{type_name}[{style.number(len(self.obj))}: {
+                    _aggregate_and_format_objects(self.obj_nodes, style=style)
                 }]"
-            return f"{type_name}[{_aggregate_and_format_objects(self.obj_nodes)}]"
+            return (
+                f"{type_name}"
+                f"[{_aggregate_and_format_objects(self.obj_nodes, style=style)}]"
+            )
 
         if has_size:
-            return f"{type_name}[{_fmt.number(len(self.obj))}]"
+            return f"{type_name}[{style.number(len(self.obj))}]"
 
         return type_name

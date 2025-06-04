@@ -2,50 +2,51 @@
 
 from __future__ import annotations
 
-import builtins
+from typing import TYPE_CHECKING
 
-from typesum import _fmt
-from typesum._format_nodes import utils
-from typesum.expands import Expand
+from typesum.config import Config
+from typesum.formatter import Formatter
 
-MAX_LENGTH = 130
+if TYPE_CHECKING:
+    from typesum import _fmt
+    from typesum.expands import Expand
+
+_default_formatter = Formatter(Config())
 
 
 def format(  # noqa: A001
     obj: _fmt.Formattable,
     *,
     expand: list[Expand | str] | None = None,
+    enable_ansi: bool | None = None,
 ) -> str:
     """Generate a short 'summary' string of the object.
 
     Args:
         obj: The object to summarize.
         expand: A list of "expands" to force on an object. They will
-                not be contracted. This can be also used to add expands
-                that are not added by default.
+            not be contracted. This can be also used to add expands
+            that are not added by default.
+        enable_ansi: Whether to use ANSI escape codes for formatting.
+            This overrides configuration.
 
     """
-    if not expand:
-        expand = []
-
-    expand_enum: list[Expand] = [Expand(e) if isinstance(e, str) else e for e in expand]
-
-    fn = utils.create_format_node(obj, expand=expand_enum)
-
-    while True:
-        fstr = fn.format()
-        if fstr and len(fstr) <= MAX_LENGTH:
-            return fstr
-        if not fn.contract():
-            if fstr:
-                return fstr + " \033[31m(!)\033[m" if _fmt.enable_fmt else fstr
-            return "..."
+    return _default_formatter.format(
+        obj,
+        expand=expand,
+        enable_ansi=enable_ansi,
+    )
 
 
 def print(  # noqa: A001
     obj: _fmt.Formattable,
     *,
     expand: list[Expand | str] | None = None,
+    enable_ansi: bool | None = None,
 ) -> None:
     """Print a short 'summary' string of the object."""
-    builtins.print(format(obj, expand=expand))
+    return _default_formatter.print(
+        obj,
+        expand=expand,
+        enable_ansi=enable_ansi,
+    )
