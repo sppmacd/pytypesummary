@@ -76,7 +76,7 @@ class TestIterable(TestCase):
             formatter.format(
                 [1, 2, ["test"], 4, 5, 6, ["test2"], "testaaaaggggaaaaa3"],
             ),
-            "list[int, int, list[1], int, int, int, list[1], str]",
+            "list[int, int, list(1), int, int, int, list(1), str]",
         )
 
     def test_range(self):
@@ -84,7 +84,14 @@ class TestIterable(TestCase):
 
     def test_tuple(self):
         complex_list = ([*range(15), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, "test", [], {}],)
-        self.assertEqual(formatter.format(complex_list), "tuple[list[24]]")
+        self.assertEqual(formatter.format(complex_list), "tuple[list(24)]")
+        self.assertEqual(
+            formatter.format(
+                (1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2),
+                expand=["aggregate", "value"],
+            ),
+            "tuple(20)[10*{1}, 10*{2}]",
+        )
         self.assertEqual(
             formatter.format(complex_list, expand=["aggregate"]),
             "tuple[1*{list[15*{int}, 6*{float}, 1*{str}, 1*{list[]}, 1*{dict}]}] (!)",
@@ -128,7 +135,7 @@ class TestNumPy(TestCase):
                 ),
                 expand=["size"],
             ),
-            "tuple[2]",
+            "tuple(2)",
             # FIXME: I don't like this output. This is because
             # the default output (with all sizes) is too long, and we
             # can't contract SIZE, so we contract ALL_ARRAY_MEMBERS

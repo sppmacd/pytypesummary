@@ -69,7 +69,7 @@ class RaIterable(FormatNode):
 
         if self._has_expand(Expand.AGGREGATE):
             if has_size:
-                return f"{type_name}[{style.number(len(self.obj))}: {
+                return f"{type_name}({style.number(len(self.obj))})[{
                     _aggregate_and_format_objects(self.obj_nodes, style=style)
                 }]"
             return (
@@ -78,6 +78,6 @@ class RaIterable(FormatNode):
             )
 
         if has_size:
-            return f"{type_name}[{style.number(len(self.obj))}]"
+            return f"{type_name}({style.number(len(self.obj))})"
 
         return type_name

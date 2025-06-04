@@ -45,7 +45,7 @@ Lists:
 list[1, 2, 3, 4, 5, 1, 2, 3, 4, 5]
 
 >>> ts.print([1, 2, 3, 4, 5]*10)
-list[50]
+list(50)
 ```
 
 Tuples:
@@ -62,10 +62,10 @@ Count elements:
 
 ```py
 >>> ts.print([1,1,2,2,3,3,1,2,3]*10, expand=["aggregate"])
-list[90: 90*{int}]
+list(90)[90*{int}]
 
 >>> ts.print([1,1,2,2,3,3,1,2,3]*10, expand=["aggregate", "value"])
-list[90: 30*{1}, 30*{2}, 30*{3}]
+list(90)[30*{1}, 30*{2}, 30*{3}]
 ```
 
 NumPy arrays:
