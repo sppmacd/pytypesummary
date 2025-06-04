@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import builtins
+
 from typesum import _fmt
 from typesum._format_nodes import utils
 from typesum.expands import Expand
@@ -9,7 +11,7 @@ from typesum.expands import Expand
 MAX_LENGTH = 130
 
 
-def format_(
+def format(  # noqa: A001
     obj: _fmt.Formattable,
     *,
     expand: list[Expand | str] | None = None,
@@ -40,10 +42,10 @@ def format_(
             return "..."
 
 
-def print_(
+def print(  # noqa: A001
     obj: _fmt.Formattable,
     *,
     expand: list[Expand | str] | None = None,
 ) -> None:
     """Print a short 'summary' string of the object."""
-    print(format_(obj, expand=expand))  # noqa: T201
+    builtins.print(format(obj, expand=expand))
