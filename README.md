@@ -97,13 +97,3 @@ PyTorch:
 >>> ts.print(torch.tensor([[1, 1], [2, 3], [3, -1], [4, 6], [5, 2]]))
 tensor[cpu]((5, 2)*{int64})
 ```
-
-Set maximum length (it is bypassed by manually specified expands):
-
-```py
->>> ts
-ts.MAX_LENGTH = 10
-
->>> ts.print(torch.tensor([[1, 1], [2, 3], [3, -1], [4, 6], [5, 2]]))
-tensor(int64) (!)   # got longer than max length!
-```
