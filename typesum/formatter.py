@@ -85,8 +85,8 @@ class Formatter:
 
         if len(objs) == 1:
             print(_format(objs[0]))
-
-        print("[")
-        for obj in objs:
-            print("  " + _format(obj) + ",")
-        print("]")
+        else:
+            print("[")
+            for obj in objs:
+                print("  " + _format(obj) + ",")
+            print("]")
