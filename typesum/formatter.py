@@ -69,17 +69,24 @@ class Formatter:
 
     def print(
         self,
-        obj: _fmt.Formattable,
-        *,
+        *objs: list[_fmt.Formattable],
         expand: list[Expand | str] | None = None,
         enable_ansi: bool | None = None,
     ) -> None:
         """Print a short 'summary' string of the object."""
-        print(
-            self.format(
+
+        def _format(obj):
+            return self.format(
                 obj,
                 expand=expand,
                 enable_ansi=enable_ansi,
                 _is_print=True,
-            ),
-        )
+            )
+
+        if len(objs) == 1:
+            print(_format(objs[0]))
+
+        print("[")
+        for obj in objs:
+            print("  " + _format(obj) + ",")
+        print("]")

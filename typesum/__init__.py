@@ -39,14 +39,13 @@ def format(  # noqa: A001
 
 
 def print(  # noqa: A001
-    obj: _fmt.Formattable,
-    *,
+    *objs: list[_fmt.Formattable],
     expand: list[Expand | str] | None = None,
     enable_ansi: bool | None = None,
 ) -> None:
     """Print a short 'summary' string of the object."""
     return _default_formatter.print(
-        obj,
+        *objs,
         expand=expand,
         enable_ansi=enable_ansi,
     )
