@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import sys
 
 from typesum import _fmt
@@ -72,10 +71,11 @@ class Formatter:
         *objs: list[_fmt.Formattable],
         expand: list[Expand | str] | None = None,
         enable_ansi: bool | None = None,
+        **kwargs: dict[str, _fmt.Formattable],
     ) -> None:
         """Print a short 'summary' string of the object."""
 
-        def _format(obj):
+        def _format_obj(obj):
             return self.format(
                 obj,
                 expand=expand,
@@ -83,10 +83,21 @@ class Formatter:
                 _is_print=True,
             )
 
-        if len(objs) == 1:
-            print(_format(objs[0]))
+        def _format_pair(key, value):
+            if key is None:
+                return _format_obj(value)
+            return f"{key} = {_format_obj(value)}"
+
+        object_pairs = []
+        if objs:
+            object_pairs.extend((None, obj) for obj in objs)
+        if kwargs:
+            object_pairs.extend(kwargs.items())
+
+        if len(object_pairs) == 1:
+            print(_format_pair(*object_pairs[0]))
         else:
             print("[")
-            for obj in objs:
-                print("  " + _format(obj) + ",")
+            for key, value in object_pairs:
+                print("  " + _format_pair(key, value) + ",")
             print("]")

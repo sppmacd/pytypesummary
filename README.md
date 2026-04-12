@@ -38,6 +38,20 @@ If you don't want to print, you can `format`:
 "A very ...g string"
 ```
 
+Print multiple objects at once:
+
+```py
+>>> import typesum as ts
+
+>>> ts.print("a_big_object", "other_object", another_object="another_object", yet_another_object="foo")
+[
+  "a_big_object",
+  "other_object",
+  another_object = "another_object",
+  yet_another_object = "foo",
+]
+```
+
 Lists:
 
 ```py

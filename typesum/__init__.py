@@ -42,10 +42,12 @@ def print(  # noqa: A001
     *objs: list[_fmt.Formattable],
     expand: list[Expand | str] | None = None,
     enable_ansi: bool | None = None,
+    **kwargs: dict[str, _fmt.Formattable],
 ) -> None:
     """Print a short 'summary' string of the object."""
     return _default_formatter.print(
         *objs,
         expand=expand,
         enable_ansi=enable_ansi,
+        **kwargs,
     )
