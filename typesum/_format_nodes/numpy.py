@@ -23,9 +23,11 @@ class Array(FormatNode):
     def format(self, style: _fmt.Style) -> FormatResult:
         type_name = style.type_("ndarray")
         if self._has_expand(Expand.SIZE):
-            return f"{type_name}({style.number(self.obj.shape)}*{{{
-                style.type_(self.obj.dtype)
-            }}})"
+            return (
+                f"{type_name}({style.number(self.obj.shape)}*{{"
+                f"{style.type_(self.obj.dtype)}"
+                f"}})"
+            )
 
         return f"{type_name}({self.obj.dtype})"
 

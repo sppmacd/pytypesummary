@@ -6,11 +6,13 @@ everything.
 Output is limited so that it fits on the screen, but you can still
 select what you want to see through [expands](./typesum/expands.py).
 
-This is work in progress; API _will_ change.
-
 ## Install
 
-Clone, then `pip install .`.
+This library is a work in progress. API is unstable and will likely be changed.
+
+To install the latest version (not stable): `pip install typesum`.
+
+For a dev version, clone this repository, then `pip install .`.
 
 ## Some examples
 

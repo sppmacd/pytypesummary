@@ -35,11 +35,11 @@ class DataFrame(FormatNode):
         idx_string = (
             f"{self.obj.index.name}->" if self.obj.index.name is not None else ""
         )
-        return f"{type_name}({idx_string}{style.number(len(self.obj))}*{{[{
-            ', '.join(
-                format_column(c, d) for c, d in zip(self.obj.columns, self.obj.dtypes)
-            )
-        }]}})"
+        return (
+            f"{type_name}({idx_string}{style.number(len(self.obj))}*{{["
+            f"{', '.join(format_column(c, d) for c, d in zip(self.obj.columns, self.obj.dtypes))}"
+            f"]}})"
+        )
 
 
 class Series(FormatNode):

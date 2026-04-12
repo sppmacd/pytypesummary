@@ -63,17 +63,20 @@ class RaIterable(FormatNode):
         type_name = style.type_(type(self.obj).__name__)
 
         if self._has_expand(Expand.ALL_ARRAY_MEMBERS):
-            return f"{type_name}[{
-                ', '.join(on.format(style) or '...' for on in self.obj_nodes)
-            }]"
+            return (
+                f"{type_name}["
+                f"{', '.join(on.format(style) or '...' for on in self.obj_nodes)}"
+                f"]"
+            )
 
         has_size = self._has_expand(Expand.SIZE)
 
         if self._has_expand(Expand.AGGREGATE):
             if has_size:
-                return f"{type_name}({style.number(len(self.obj))})[{
-                    _aggregate_and_format_objects(self.obj_nodes, style=style)
-                }]"
+                return (
+                    f"{type_name}({style.number(len(self.obj))})"
+                    f"[{_aggregate_and_format_objects(self.obj_nodes, style=style)}]"
+                )
             return (
                 f"{type_name}"
                 f"[{_aggregate_and_format_objects(self.obj_nodes, style=style)}]"

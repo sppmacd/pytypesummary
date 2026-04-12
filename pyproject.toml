@@ -1,5 +1,30 @@
-# pyproject.toml
 [build-system]
-# XXX: If your project needs other packages to build properly, add them to this list.
-requires = ["setuptools >= 64"]
+requires = ["setuptools >= 64", "setuptools_scm>=8"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "typesum"
+version = "0.1.0"
+description = "Display any Python object in a readable way"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Maciej Zygmanowski", email = "sppmacd.oss@proton.me"},
+]
+keywords = ["pretty-print", "debug", "formatting", "utility"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Utilities",
+]
+dependencies = []
+
+[project.optional-dependencies]
+test = ["numpy>=1.20", "pandas>=1.0", "torch>=1.9"]
+
+[project.urls]
+Homepage = "https://github.com/sppmacd/pytypesummary"
+Repository = "https://github.com/sppmacd/pytypesummary.git"
+Issues = "https://github.com/sppmacd/pytypesummary/issues"

@@ -32,9 +32,11 @@ class Str(FormatNode):
             obj_repr_beg = f'"{self.obj[: max_len // 2]}'
             obj_repr_end = f"{self.obj[-max_len // 2 :]}"
             ellipsis = "..." if len(self.obj) > max_len else ""
-            return f"{style.string(obj_repr_beg)}{style.error(ellipsis)}{
-                style.string(obj_repr_end)
-            }{style.string('"')}"
+            quote = '"'
+            return (
+                f"{style.string(obj_repr_beg)}{style.error(ellipsis)}"
+                f"{style.string(obj_repr_end)}{style.string(quote)}"
+            )
 
         # no expansion
         return f"{style.type_('str')}"

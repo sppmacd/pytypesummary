@@ -2,7 +2,7 @@
 # ruff: noqa: D101, D102 (docstrings)
 # ruff: noqa: PT009 (assertEqual)
 
-from unittest import TestCase
+from unittest import TestCase, skipIf
 
 from typesum.config import AnsiPrint, Config
 from typesum.formatter import Formatter
@@ -213,10 +213,19 @@ class TestPandas(TestCase):
         )
 
 
-class TestTorch(TestCase):
-    def test_tensor(self):
-        import torch
+# Torch is a rather heavy dependency.
+torch_available = False
+try:
+    import torch
 
+    torch_available = True
+except ImportError:
+    pass
+
+
+class TestTorch(TestCase):
+    @skipIf(not torch_available, "torch not installed")
+    def test_tensor(self):
         self.assertEqual(
             formatter.format(
                 torch.tensor([1, 2, 3, 4, 5]),
