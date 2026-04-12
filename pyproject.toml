@@ -22,9 +22,12 @@ classifiers = [
 dependencies = []
 
 [project.optional-dependencies]
-test = ["numpy>=1.20", "pandas>=1.0", "torch>=1.9"]
+test = ["pytest>=7.0", "numpy>=1.24", "pandas>=2.0", "torch>=2.0"]
 
 [project.urls]
 Homepage = "https://github.com/sppmacd/pytypesummary"
 Repository = "https://github.com/sppmacd/pytypesummary.git"
 Issues = "https://github.com/sppmacd/pytypesummary/issues"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
